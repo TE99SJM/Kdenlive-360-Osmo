@@ -36,9 +36,16 @@ jobs:
           Copy-Item build/Release/osmo360-editor.exe $app
           windeployqt --release --no-translations --dir $app "$app/osmo360-editor.exe"
           if ($LASTEXITCODE) { exit $LASTEXITCODE }
+          $vswhere = "${env:ProgramFiles(x86)}/Microsoft Visual Studio/Installer/vswhere.exe"
+          $vs = & $vswhere -latest -products '*' -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath
+          $crt = Get-ChildItem "$vs/VC/Redist/MSVC/*/x64/Microsoft.VC*.CRT" -Directory | Sort-Object FullName -Descending | Select-Object -First 1
+          if (!$crt) { throw "The Microsoft app-local C++ runtime is missing." }
+          Copy-Item "$($crt.FullName)/*.dll" $app
           Copy-Item LICENSE,LICENSE-PanoForge $app
           Copy-Item windows/Install-Kdenlive.cmd,README.md Osmo360-Windows-x64
-          $env:QT_QPA_PLATFORM = "offscreen"
+          $env:QT_QPA_PLATFORM = "windows"
+          Remove-Item Env:QT_PLUGIN_PATH -ErrorAction SilentlyContinue
+          $env:PATH = "$env:SystemRoot/System32;$env:SystemRoot"
           $process = Start-Process "$app/osmo360-editor.exe" -ArgumentList '--install','--data-dir','check-registration' -Wait -PassThru
           if ($process.ExitCode -or !(Select-String -Quiet -Path check-registration/clipjobsettings.rc -Pattern 'osmo360reframe=')) {
             throw "The packaged editor could not register its Kdenlive job."
