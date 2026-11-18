@@ -12,6 +12,8 @@ In Kdenlive, import the original OSV, select its first clip in the bin, then ope
 
 Scrub to a frame, then drag the picture to aim. Releasing the drag adds a camera keyframe. The FOV slider changes the zoom and Roll tilts the view. Use the arrow buttons to visit adjacent keys and Undo to reverse the last camera change. **Save edit** writes an editable `.k360` camera track. Reopen a saved track with `python3 editor.py your-edit.k360`.
 
+**Pan only (lock pitch)** is on for new recordings. Drag left or right to pan. Vertical mouse movement is ignored, so the view stays at its current elevation. Uncheck it to aim up or down. To tilt the horizon deliberately, scrub to the frame, type an angle next to **Roll**, and click **Key roll**. Releasing the Roll slider also sets a roll key. New recordings start at 0° roll and hold each chosen angle until the next roll key. Panning and zooming have their own keyframes. Existing saved edits keep their original camera movement.
+
 **Play** creates a temporary silent 8 fps proxy. **Render and import** reads the original at its full frame rate. For a flat clip, choose landscape, portrait or square. Choose **360 panorama** for an interactive spherical video.
 
 ## Output
