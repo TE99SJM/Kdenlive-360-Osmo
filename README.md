@@ -6,6 +6,8 @@ Open a dual-lens DJI Osmo 360 recording, drag to frame the shot, set camera keyf
 
 Download the **Osmo360-Windows-x64** binary package, extract the ZIP, close Kdenlive and double-click **Install-Kdenlive.cmd**. The installer registers the C++/Qt 6 editor for the current Windows user. It uses FFmpeg and FFprobe from the Kdenlive bin directory or PATH. Windows packages are also produced by the [native build](https://github.com/TE99SJM/Kdenlive-360-Osmo/actions/workflows/native-windows.yml). GitHub's **Download ZIP** button on the repository gives you the source code.
 
+The installer updates the existing **Osmo 360 Editor** Media Job. If it detects the older Python installation, it offers to archive its installed scripts in `%LOCALAPPDATA%\kdenlive\backups\osmo360-python`. Recordings and saved camera tracks can stay where they are.
+
 In stock Kdenlive, close the Open dialog and drag a recording from File Explorer onto the **Project Bin**. Select the imported clip and open **Clip Jobs → Osmo 360 Editor** (called **Media Jobs** in some versions). Kdenlive adds the finished MP4 to **360 edits**. You can also drop a recording or a saved edit into the standalone native editor and choose where to export. A built **KdenCut 360** opens the editor automatically when an OSV or K360 is dropped onto its Project Bin.
 
 ## Build from source
@@ -15,6 +17,8 @@ With Qt 6 Widgets, CMake and a C++17 compiler installed, run `cmake -S native -B
 ## Reframing
 
 Scrub to a frame and drag the picture to aim. Releasing the drag records an aim keyframe. The mouse wheel or **FOV** control changes zoom. **Pan only (lock pitch)** starts enabled on new recordings. Horizontal dragging pans at the current elevation. Disable it to aim up or down. Enter a **Roll** angle and click **Key roll** to hold that tilt until the next roll key. Existing version 1 and 2 camera tracks can be opened in the native editor. Use **Save edit** to keep the editable `.k360` track.
+
+The progress bar animates while the editor reads camera metadata and prepares the first preview. Proxy creation and export show frame-based percentages. Kdenlive remains available while the Media Job runs. In KdenCut 360, queued imports also report progress in the main status bar and add each completed clip to its original project folder.
 
 **Play** creates a temporary silent 1024 × 512, 8 fps playback proxy. **Render and import** reads the original at its full frame rate. For a flat clip, choose landscape, portrait or square. Choose **360 panorama** for an interactive spherical video.
 
