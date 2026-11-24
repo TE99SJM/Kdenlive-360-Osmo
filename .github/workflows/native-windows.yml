@@ -19,9 +19,19 @@ jobs:
       - name: Build and test the editor
         shell: pwsh
         run: |
-          if (!(Get-Command ffprobe -ErrorAction SilentlyContinue)) {
-            choco install ffmpeg --no-progress -y
+          if (!(Get-Command ffmpeg -ErrorAction SilentlyContinue) -or !(Get-Command ffprobe -ErrorAction SilentlyContinue)) {
+            $zip = Join-Path $env:RUNNER_TEMP 'ffmpeg-8.0.1.zip'
+            $url = 'https://github.com/GyanD/codexffmpeg/releases/download/8.0.1/ffmpeg-8.0.1-essentials_build.zip'
+            curl.exe --fail --location --retry 3 --output $zip $url
             if ($LASTEXITCODE) { exit $LASTEXITCODE }
+            if ((Get-FileHash $zip -Algorithm SHA256).Hash -ne 'e2aaeaa0fdbc397d4794828086424d4aaa2102cef1fb6874f6ffd29c0b88b673') {
+              throw 'Unexpected FFmpeg archive checksum.'
+            }
+            $toolsDir = Join-Path $env:RUNNER_TEMP 'osmo-test-tools'
+            Expand-Archive $zip -DestinationPath $toolsDir
+            $ffmpeg = Get-ChildItem $toolsDir -Filter ffmpeg.exe -File -Recurse | Select-Object -First 1
+            if (!$ffmpeg -or !(Test-Path (Join-Path $ffmpeg.DirectoryName 'ffprobe.exe'))) { throw 'Missing FFmpeg test tools.' }
+            $env:PATH = "$($ffmpeg.DirectoryName);$env:PATH"
           }
           cmake -S native -B build -A x64
           if ($LASTEXITCODE) { exit $LASTEXITCODE }
